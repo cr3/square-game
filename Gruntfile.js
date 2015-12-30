@@ -71,7 +71,6 @@ module.exports = function(grunt) {
             build: {
                 files: {
                     "build/animation-polyfill.js": "src/animation-polyfill.js",
-                    "build/bind-polyfill.js": "src/bind-polyfill.js",
                     "build/extend.js": "src/extend.js",
                     "build/matrix.js": "src/matrix.js",
                     "build/counter.js": "src/counter.js",

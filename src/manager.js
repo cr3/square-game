@@ -1,52 +1,39 @@
-var manager = {
+var Manager = function (container) {
+    /* Private variables.  */
+    var colsContainer = document.getElementById("cols");
+    var rowsContainer = document.getElementById("rows");
 
-    run: function (container) {
-        /* Create persistent objects.  */
-        this.container = container;
-        this.board = Board(
-            document.getElementById("board"));
-        this.player = Player(
-            document.getElementById("player"),
-            document.getElementById("counter"));
+    var board = Board(
+        document.getElementById("board"));
+    var player = Player(
+        document.getElementById("player"),
+        document.getElementById("counter"));
 
-        this.reset();
+    /* Private functions.  */
+    var add = function () {
+        player.animate("add");
+    };
 
-        /* Initialize input event handlers.  */
-        this.input = Input(container);
-        this.input.on("add", this.add.bind(this));
-        this.input.on("move", this.move.bind(this));
-        this.input.on("undo", this.undo.bind(this));
-        this.input.on("reset", this.reset.bind(this));
-        this.input.on("resize", this.resize.bind(this));
+    var move = function (direction) {
+        player.animate(direction);
+    };
 
-        this.resize();
-    },
+    var undo = function () {
+        player.animate("undo");
+    };
 
-    add: function () {
-        this.player.animate("add");
-    },
+    var reset = function () {
+        var cols = parseInt(colsContainer.value, 10);
+        var rows = parseInt(rowsContainer.value, 10);
 
-    move: function (direction) {
-        this.player.animate(direction);
-    },
+        board.reset(cols, rows);
+        player.reset(cols, rows);
+    };
 
-    undo: function () {
-        this.player.animate("undo");
-    },
-
-    /* Reset the board and player.  */
-    reset: function () {
-        var cols = parseInt(document.getElementById("cols").value, 10);
-        var rows = parseInt(document.getElementById("rows").value, 10);
-
-        this.board.reset(cols, rows);
-        this.player.reset(cols, rows);
-    },
-
-    resize: function () {
+    var resize = function () {
         var content = [
-            this.container.offsetWidth,
-            this.container.offsetHeight
+            container.offsetWidth,
+            container.offsetHeight
         ];
         var browser = [
             window.innerWidth,
@@ -60,11 +47,26 @@ var manager = {
         var rule = "translate(" + offset + "px, 0px)" +
             " scale(" + scale + ")";
 
-        this.board.resize(size);
-        this.player.resize(size);
+        board.resize(size);
+        player.resize(size);
 
         /* Apply CSS transform.  */
-        this.container.style.transform = rule;
-        this.container.style.webkitTransform = rule;
-    }
+        container.style.transform = rule;
+        container.style.webkitTransform = rule;
+    };
+
+    /* Public methods.  */
+    return {
+        run: function () {
+            var input = Input(container);
+            input.on("add", add);
+            input.on("move", move);
+            input.on("undo", undo);
+            input.on("reset", reset);
+            input.on("resize", resize);
+
+            reset();
+            resize();
+        }
+    };
 };

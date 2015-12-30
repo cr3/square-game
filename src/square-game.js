@@ -1,4 +1,5 @@
 /* Wait for the browser to be ready.  */
 window.requestAnimationFrame(function () {
-    manager.run(document.body.children[0]);
+    var manager = Manager(document.body.children[0]);
+    manager.run();
 });
