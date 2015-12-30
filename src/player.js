@@ -5,7 +5,7 @@ var Player = function (playerContainer, counterContainer, options) {
     };
     var square = Square({
         fillStyle: "#bbada0",
-        margin: 12
+        margin: 25
     });
 
     /* Private variables.  */
@@ -21,18 +21,23 @@ var Player = function (playerContainer, counterContainer, options) {
     var loop = function () {
         action = queue[0];
         switch (action) {
-        case "done":
         case "undo":
             undo(action);
             break;
         case "add":
         case "remove":
+        case "-add":
+        case "-remove":
             edit(action);
             break;
         case "left":
         case "right":
         case "anticlockwise":
         case "clockwise":
+        case "-left":
+        case "-right":
+        case "-anticlockwise":
+        case "-clockwise":
             move(action);
             break;
         case undefined:
@@ -40,12 +45,7 @@ var Player = function (playerContainer, counterContainer, options) {
             break;
         }
 
-        if (step >= options.steps) {
-            stack.push(action);
-            queue.shift();
-            step = 0;
-        }
-
+        count(action);
         board.draw();
 
         if (queue.length) {
@@ -53,35 +53,23 @@ var Player = function (playerContainer, counterContainer, options) {
         }
     };
 
-    // TODO: remove this
-    var undoing = function () {
-        return queue.length && queue[queue.length - 1] === "done";
+    var count = function (action) {
+        if (step >= options.steps) {
+            if (action[0] === "-") {
+                counter.decrement();
+            } else {
+                counter.increment();
+                stack.push(action);
+            }
+            queue.shift();
+            step = 0;
+        }
     };
 
     var undo = function (action) {
-        var previous;
-        var opposites = {
-            "add":           "remove",
-            "remove":        "add",
-            "left":          "right",
-            "right":         "left",
-            "clockwise":     "anticlockwise",
-            "anticlockwise": "clockwise",
-        };
-
         queue.shift();
-        switch (action) {
-        case "undo":
-            previous = stack.pop();
-            if (typeof previous !== "undefined") {
-                queue.push(opposites[previous]);
-                queue.push("done");
-            }
-            break;
-        case "done":
-            counter.decrement();
-            stack.pop();
-            break;
+        if (stack.length) {
+            queue.push("-" + stack.pop());
         }
     };
 
@@ -93,9 +81,11 @@ var Player = function (playerContainer, counterContainer, options) {
 
         switch (action) {
         case "add":
+        case "-remove":
             newElement = square;
             break;
         case "remove":
+        case "-add":
             newElement = emptySquare;
             break;
         default:
@@ -106,9 +96,6 @@ var Player = function (playerContainer, counterContainer, options) {
         }
 
         if (newElement !== oldElement) {
-            if (!undoing()) {
-                counter.increment();
-            }
             matrix.set(col, row, newElement);
             step += options.steps;
         } else {
@@ -119,42 +106,42 @@ var Player = function (playerContainer, counterContainer, options) {
     var move = function (direction) {
         var sign = 1;
 
-        // TODO: clean this
-        if (!stack.length) {
-            queue.shift();
-            return;
-        }
+        if (stack.length) {
 
-        /* Save context before applying transformations.  */
-        if (!step) {
-            context.save();
-        }
-
-        switch (direction) {
-        case "left":
-            sign = -1;
-        case "right":
-            translate(sign);
-            break;
-        case "anticlockwise":
-            sign = -1;
-        case "clockwise":
-            rotate(sign);
-            break;
-        default:
-            throw {
-                name: "TypeError",
-                message: "Unknown move: " + direction
-            };
-        }
-
-        /* Restore context after applying transformations.  */
-        if (++step >= options.steps) {
-            if (!undoing()) {
-                counter.increment();
+            /* Save context before applying transformations.  */
+            if (!step) {
+                context.save();
             }
-            context.restore();
-            matrix.move(direction);
+
+            switch (direction) {
+            case "left":
+            case "-right":
+                sign = -1;
+            case "right":
+            case "-left":
+                translate(sign);
+                break;
+            case "anticlockwise":
+            case "-clockwise":
+                sign = -1;
+            case "clockwise":
+            case "-anticlockwise":
+                rotate(sign);
+                break;
+            default:
+                throw {
+                    name: "TypeError",
+                    message: "Unknown move: " + direction
+                };
+            }
+
+            /* Restore context after applying transformations.  */
+            if (++step >= options.steps) {
+                context.restore();
+                matrix.move(direction);
+            }
+        } else {
+            queue.shift();
         }
     };
 

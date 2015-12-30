@@ -55,18 +55,22 @@ var Matrix = function (initial) {
         move: function (direction) {
             switch (direction) {
             case "left":
+            case "-right":
                 matrix.push(matrix.shift());
                 break;
             case "right":
+            case "-left":
                 matrix.unshift(matrix.pop());
                 break;
-            case "clockwise":
-                transpose();
-                matrix.reverse();
-                break;
             case "anticlockwise":
+            case "-clockwise":
                 matrix.reverse();
                 transpose();
+                break;
+            case "clockwise":
+            case "-anticlockwise":
+                transpose();
+                matrix.reverse();
                 break;
             default:
                 throw {

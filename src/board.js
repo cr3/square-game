@@ -51,4 +51,4 @@ var Board = function (boardContainer, matrix) {
             this.draw();
         }
     };
-}; 
+};

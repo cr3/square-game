@@ -21,6 +21,7 @@ var Pointer = function (options) {
             startY = y;
         },
         end: function (x, y) {
+            var direction;
             var distX = x - startX;
             var distY = y - startY;
             var elapsedTime = new Date().getTime() - startTime;
@@ -28,13 +29,13 @@ var Pointer = function (options) {
             if (elapsedTime < options.allowedTime) {
                 if (Math.abs(distX) >= options.threshold &&
                     Math.abs(distY) < options.restraint) {
-                    return (distX < 0) ? "left" : "right";
+                    direction = (distX < 0) ? "left" : "right";
                 } else if (Math.abs(distY) >= options.threshold &&
                     Math.abs(distX) < options.restraint) {
-                    return (distY < 0) ? "up" : "down";
+                    direction = (distY < 0) ? "up" : "down";
                 }
             }
-            return undefined;
+            return direction;
         }
     };
 };
