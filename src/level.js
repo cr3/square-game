@@ -1,4 +1,4 @@
-/* Create a level.  */
+/* A level is a counter providing matrix dimensions.  */
 var Level = function (element) {
     var level = Counter(element);
 

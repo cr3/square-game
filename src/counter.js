@@ -1,4 +1,4 @@
-/* Create a counter to keep score.  */
+/* Counter to keep score.  */
 var Counter = function (element) {
     var initial = parseInt(element.innerHTML, 10);
     var count = initial;
