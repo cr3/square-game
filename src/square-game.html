@@ -14,12 +14,15 @@
         </div>
         <div class="info">
           <div class="controls">
-            <input type="text" id="cols" maxlength="1" value="3"
-            />&nbsp;x&nbsp;<input type="text" id="rows" maxlength="1" value="3"
-            />&nbsp;<input type="button" id="reset" value="New game" />
+            <input type="button" id="reset" value="New game" />
           </div>
-          <div class="counter">
-            Counter <span class="alternate" id="counter">0</span>
+          <div class="counters">
+            <div class="level">
+              Level <span class="alternate" id="level">1</span>
+            </div>
+            <div class="counter">
+              Counter <span class="alternate" id="counter">0</span>
+            </div>
           </div>
         </div>
       </header>
@@ -29,31 +32,41 @@
         </canvas>
         <canvas id="player">
         </canvas>
+        <canvas id="message">
+        </canvas>
       </section>
       <nav>
         <input type="button" id="add" value="+"
         /><input type="button" id="left" value="&#8592;"
         /><input type="button" id="right" value="&#8594;"
-        /><input type="button" id="clockwise" value="&#8631;"
-        /><input type="button" id="anticlockwise" value="&#8630;"
+        /><input type="button" id="up" value="&#8630;"
+        /><input type="button" id="down" value="&#8631;"
         /><input type="button" id="undo" value="&#8634;" />
       </nav>
       <footer>
         <h1>How to play</h1>
         <ol>
-          <li>Add a grey square with the <strong>Enter</strong> key.</li>
-          <li>Move the square sideways with the <strong>right</strong>
-            and <strong>left</strong> arrow keys, or rotate it with the
-            <strong>up</strong> and <strong>down</strong> arrow keys.</li>
-          <li>Add more grey squares and repeat until they are over each
-            black square.</li>
+          <li>Add a grey square with the <strong>+</strong> button or
+            <strong>Enter</strong> key.</li>
+          <li>Move all grey squares sideways with the
+            <strong>&#8592;</strong> and <strong>&#8594;</strong> buttons,
+            or the <strong>left</strong> and <strong>right</strong> arrow
+            keys.</li>
+          <li>Rotate all grey squares with the <strong>&#8630;</strong>
+            and <strong>&#8631;</strong> buttons, or the <strong>up</strong>
+            and <strong>down</strong> arrow keys.</li>
+          <li>Add more grey squares, move and rotate until all black
+            squares are covered.</li>
         </ol>
       </footer>
     </div>
     <script type="text/javascript" src="animation-polyfill.js"></script>
     <script type="text/javascript" src="extend.js"></script>
     <script type="text/javascript" src="matrix.js"></script>
+    <script type="text/javascript" src="action.js"></script>
     <script type="text/javascript" src="counter.js"></script>
+    <script type="text/javascript" src="level.js"></script>
+    <script type="text/javascript" src="message.js"></script>
     <script type="text/javascript" src="pointer.js"></script>
     <script type="text/javascript" src="square.js"></script>
     <script type="text/javascript" src="input.js"></script>

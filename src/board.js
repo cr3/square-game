@@ -11,8 +11,41 @@ var Board = function (boardContainer, matrix) {
         matrix = Matrix(emptySquare);
     }
 
+    /* Private functions.  */
+    var seq = function (length) {
+        var array = [];
+        var integer;
+
+        for (integer = 0; integer < length; ++integer) {
+            array.push(integer);
+        }
+
+        return array;
+    };
+
+    var shuffle = function (array) {
+        var shuffled = array.slice(0),
+            arrayIndex = array.length,
+            randomItem,
+            randomIndex;
+
+        while (arrayIndex--) {
+            randomIndex = Math.floor((arrayIndex + 1) * Math.random());
+            randomItem = shuffled[randomIndex];
+            shuffled[randomIndex] = shuffled[arrayIndex];
+            shuffled[arrayIndex] = randomItem;
+        }
+
+        return shuffled;
+    };
+
+    var sample = function (array, size) {
+        return shuffle(array).slice(0, size);
+    };
+
     /* Public methods.  */
     return {
+        matrix: matrix,
         cols: function () {
             return matrix.cols();
         },
@@ -35,12 +68,24 @@ var Board = function (boardContainer, matrix) {
                 m.get(col, row).draw(context, col, row, squareSize);
             });
         },
-        reset: function (cols, rows) {
-            matrix.reset(cols, rows);
-            matrix.iterate(function (matrix, col, row) {
-                if (Math.floor(Math.random()*2)) {
-                    matrix.set(col, row, square);
+        reset: function (cols, rows, count) {
+            var size = cols * rows;
+            var indices;
+
+            /* Sample should not be too easy.  */
+            while (true) {
+                indices = sample(seq(size), count);
+                if (count != 1 || indices[0] != 4) {
+                    break;
                 }
+            }
+
+            matrix.reset(cols, rows);
+            indices.forEach(function (index) {
+                var col = Math.floor(index / cols);
+                var row = index % rows;
+
+                matrix.set(col, row, square);
             });
 
             this.draw();

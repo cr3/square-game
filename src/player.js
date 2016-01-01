@@ -1,7 +1,7 @@
-var Player = function (playerContainer, counterContainer, options) {
+var Player = function (playerContainer, options) {
     /* Private constants.  */
     var defaults = {
-        steps: 5,
+        steps: 5
     };
     var square = Square({
         fillStyle: "#bbada0",
@@ -10,66 +10,61 @@ var Player = function (playerContainer, counterContainer, options) {
 
     /* Private variables.  */
     var context = playerContainer.getContext("2d");
-    var counter = Counter(counterContainer);
     var matrix = Matrix(emptySquare);
-    var board = Board(playerContainer, matrix);
+    var player = Board(playerContainer, matrix);
     var queue = [];
     var stack = [];
     var step = 0;
 
     /* Private functions.  */
     var loop = function () {
-        action = queue[0];
-        switch (action) {
+        var action = queue[0];
+
+        switch (action.name) {
         case "undo":
             undo(action);
             break;
         case "add":
         case "remove":
-        case "-add":
-        case "-remove":
             edit(action);
             break;
         case "left":
         case "right":
-        case "anticlockwise":
-        case "clockwise":
-        case "-left":
-        case "-right":
-        case "-anticlockwise":
-        case "-clockwise":
+        case "up":
+        case "down":
             move(action);
             break;
         case undefined:
             /* Do nothing.  */
-            break;
+            return;
+        default:
+            throw {
+                name: "TypeError",
+                message: "Unknown action: " + action.name
+            };
         }
 
-        count(action);
-        board.draw();
+        player.draw();
+
+        if (step >= options.steps) {
+            if (!action.inversed) {
+                stack.push(action);
+            }
+            queue.shift();
+            action.call();
+            step = 0;
+        }
 
         if (queue.length) {
             window.requestAnimationFrame(loop);
         }
     };
 
-    var count = function (action) {
-        if (step >= options.steps) {
-            if (action[0] === "-") {
-                counter.decrement();
-            } else {
-                counter.increment();
-                stack.push(action);
-            }
-            queue.shift();
-            step = 0;
-        }
-    };
-
     var undo = function (action) {
         queue.shift();
+
         if (stack.length) {
-            queue.push("-" + stack.pop());
+            queue.push(stack.pop().inverse());
         }
     };
 
@@ -79,20 +74,13 @@ var Player = function (playerContainer, counterContainer, options) {
         var oldElement = matrix.get(col, row);
         var newElement;
 
-        switch (action) {
+        switch (action.name) {
         case "add":
-        case "-remove":
             newElement = square;
             break;
         case "remove":
-        case "-add":
             newElement = emptySquare;
             break;
-        default:
-            throw {
-                name: "TypeError",
-                message: "Unknown edit: " + action
-            };
         }
 
         if (newElement !== oldElement) {
@@ -103,8 +91,8 @@ var Player = function (playerContainer, counterContainer, options) {
         }
     };
 
-    var move = function (direction) {
-        var sign = 1;
+    var move = function (action) {
+        var direction = action.name;
 
         if (stack.length) {
 
@@ -113,26 +101,21 @@ var Player = function (playerContainer, counterContainer, options) {
                 context.save();
             }
 
-            switch (direction) {
+            switch (action.name) {
             case "left":
-            case "-right":
-                sign = -1;
+                translate(-1);
+                break;
             case "right":
-            case "-left":
-                translate(sign);
+                translate(1);
                 break;
-            case "anticlockwise":
-            case "-clockwise":
-                sign = -1;
-            case "clockwise":
-            case "-anticlockwise":
-                rotate(sign);
+            case "up":
+                direction = "anticlockwise";
+                rotate(-1);
                 break;
-            default:
-                throw {
-                    name: "TypeError",
-                    message: "Unknown move: " + direction
-                };
+            case "down":
+                direction = "clockwise";
+                rotate(1);
+                break;
             }
 
             /* Restore context after applying transformations.  */
@@ -182,19 +165,18 @@ var Player = function (playerContainer, counterContainer, options) {
     options = extend(options, defaults);
 
     /* Public methods.  */
-    board.reset = function (cols, rows) {
+    player.reset = function (cols, rows) {
         queue = [];
         stack = [];
         step = 0;
-        counter.reset();
         matrix.reset(cols, rows);
-        board.draw();
+        player.draw();
     };
 
-    board.animate = function (action) {
+    player.animate = function (action) {
         queue.push(action);
         window.requestAnimationFrame(loop);
     };
 
-    return board;
+    return player;
 };

@@ -1,22 +1,29 @@
 /* Create a counter to keep score.  */
 var Counter = function (element) {
+    var initial = parseInt(element.innerHTML, 10);
+    var count = initial;
+
     /* Public methods.  */
     return {
         count: function () {
-            return parseInt(element.innerHTML, 10);
+            return count;
         },
         decrement: function () {
-            element.innerHTML = this.count() - 1;
-            return this;
+            if (count > initial) {
+                --count;
+                this.draw();
+            }
         },
         increment: function () {
-            element.innerHTML = this.count() + 1;
-            return this;
+            ++count;
+            this.draw();
+        },
+        draw: function () {
+            element.innerHTML = count;
         },
         reset: function (value) {
-            value = (typeof value === "undefined") ? 0 : value;
-            element.innerHTML = value;
-            return this;
+            count = (typeof value === "undefined") ? initial : value;
+            this.draw();
         }
     };
 };

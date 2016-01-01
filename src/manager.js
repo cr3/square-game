@@ -1,33 +1,67 @@
 var Manager = function (container) {
     /* Private variables.  */
-    var colsContainer = document.getElementById("cols");
-    var rowsContainer = document.getElementById("rows");
+    var input = Input(container);
 
-    var board = Board(
-        document.getElementById("board"));
-    var player = Player(
-        document.getElementById("player"),
-        document.getElementById("counter"));
+    var board = Board(document.getElementById("board"));
+    var counter = Counter(document.getElementById("counter"));
+    var level = Level(document.getElementById("level"));
+    var message = Message(document.getElementById("message"));
+    var player = Player(document.getElementById("player"));
 
     /* Private functions.  */
+    var check = function () {
+        if (board.matrix.compare(player.matrix)) {
+            message.reset("Level complete");
+
+            input.reset();
+            input.on("add", complete);
+            input.on("move", complete);
+            input.on("undo", complete);
+            input.on("reset", complete);
+            input.on("resize", resize);
+        }
+    };
+
+    var complete = function () {
+        level.increment();
+        reset();
+    };
+
     var add = function () {
-        player.animate("add");
+        var action = Action("add", check);
+
+        player.animate(action);
+        counter.increment();
     };
 
     var move = function (direction) {
-        player.animate(direction);
+        var action = Action(direction, check);
+
+        player.animate(action);
+        if (counter.count()) {
+            counter.increment();
+        }
     };
 
     var undo = function () {
-        player.animate("undo");
+        var action = Action("undo");
+
+        player.animate(action);
+        counter.decrement();
     };
 
     var reset = function () {
-        var cols = parseInt(colsContainer.value, 10);
-        var rows = parseInt(rowsContainer.value, 10);
+        board.reset(level.cols(), level.rows(), level.count());
+        player.reset(level.cols(), level.rows());
+        counter.reset();
+        message.reset();
 
-        board.reset(cols, rows);
-        player.reset(cols, rows);
+        input.reset();
+        input.on("add", add);
+        input.on("move", move);
+        input.on("undo", undo);
+        input.on("reset", reset);
+        input.on("resize", resize);
     };
 
     var resize = function () {
@@ -49,6 +83,7 @@ var Manager = function (container) {
 
         board.resize(size);
         player.resize(size);
+        message.resize(size);
 
         /* Apply CSS transform.  */
         container.style.transform = rule;
@@ -58,13 +93,6 @@ var Manager = function (container) {
     /* Public methods.  */
     return {
         run: function () {
-            var input = Input(container);
-            input.on("add", add);
-            input.on("move", move);
-            input.on("undo", undo);
-            input.on("reset", reset);
-            input.on("resize", resize);
-
             reset();
             resize();
         }

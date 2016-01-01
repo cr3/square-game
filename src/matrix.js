@@ -40,7 +40,32 @@ var Matrix = function (initial) {
                 matrix[col] = dim;
             }
         },
-        iterate: function (func) {
+        compare: function (other) {
+            var col;  // Column index.
+            var row;  // Row index.
+            var cols = this.cols();  // Number of columns.
+            var rows = this.rows();  // Number of rows.
+
+            if (!other ||
+                other.cols() !== cols ||
+                other.rows() !== rows) {
+                return false;
+            }
+
+            for (col = 0; col < cols; ++col) {
+                for (row = 0; row < rows; ++row) {
+                    if ((this.get(col, row) === initial &&
+                            other.get(col, row) !== initial) ||
+                        (this.get(col, row) !== initial &&
+                            other.get(col, row) === initial)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        },
+        iterate: function (callback) {
             var col;  // Column index.
             var row;  // Row index.
             var cols = this.cols();  // Number of columns.
@@ -48,27 +73,23 @@ var Matrix = function (initial) {
 
             for (col = 0; col < cols; ++col) {
                 for (row = 0; row < rows; ++row) {
-                    func(this, col, row);
+                    callback(this, col, row);
                 }
             }
         },
         move: function (direction) {
             switch (direction) {
             case "left":
-            case "-right":
                 matrix.push(matrix.shift());
                 break;
             case "right":
-            case "-left":
                 matrix.unshift(matrix.pop());
                 break;
             case "anticlockwise":
-            case "-clockwise":
                 matrix.reverse();
                 transpose();
                 break;
             case "clockwise":
-            case "-anticlockwise":
                 transpose();
                 matrix.reverse();
                 break;

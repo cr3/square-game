@@ -19,6 +19,21 @@ test("set", function () {
     equal(this.matrix.get(1, 0), 1);
 });
 
+test("compare true", function () {
+    var other = Matrix(0);
+    other.reset(2, 2);
+
+    equal(this.matrix.compare(other), true);
+});
+
+test("compare false", function () {
+    var other = Matrix(0);
+    other.reset(2, 2);
+    other.set(0, 0, 1);
+
+    equal(this.matrix.compare(other), false);
+});
+
 test("iterate", function () {
     expect(4);
     this.matrix.iterate(function(matrix, i, j) {

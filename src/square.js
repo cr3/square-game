@@ -1,6 +1,6 @@
 /* Create a square rectangle with sensible defaults.  */
 var Square = function (options) {
-    /* Private variables.  */
+    /* Private constants.  */
     var defaults = {
         fillStyle: "black",
         globalAlpha: 1.0,

@@ -58,21 +58,22 @@ var Input = function (container) {
         var action;
         var element;
         var keyCodeAction = {
-            "8": "undo",           // backspace
-            "13": "add",           // enter
-            "32": "add",           // space
-            "37": "left",          // left arrow
-            "39": "right",         // right arrow
-            "38": "anticlockwise", // up arrow
-            "40": "clockwise",     // down arrow
-            "72": "left",          // Vim left
-            "76": "right",         // Vim right
-            "75": "anticlockwise", // Vim up
-            "74": "clockwise",     // Vim down
-            "65": "left",          // A
-            "68": "right",         // D
-            "87": "anticlockwise", // W
-            "83": "clockwise"      // S
+            "8": "undo",    // backspace
+            "27": "undo",   // escape
+            "13": "add",    // enter
+            "32": "add",    // space
+            "37": "left",   // left arrow
+            "39": "right",  // right arrow
+            "38": "up",     // up arrow
+            "40": "down",   // down arrow
+            "72": "left",   // Vim left
+            "76": "right",  // Vim right
+            "75": "up",     // Vim up
+            "74": "down",   // Vim down
+            "65": "left",   // A
+            "68": "right",  // D
+            "87": "up",     // W
+            "83": "down"    // S
         };
 
         evt = evt || window.event;
@@ -112,10 +113,6 @@ var Input = function (container) {
             action = pointer.end(element.pageX, element.pageY);
             if (typeof action === "undefined") {
                 action = "add";
-            } else if (action === "up") {
-                action = "anticlockwise";
-            } else if (action === "down") {
-                action = "clockwise";
             }
             evt.preventDefault();
             break;
@@ -134,24 +131,16 @@ var Input = function (container) {
         switch (action) {
         case "left":
         case "right":
-        case "clockwise":
-        case "anticlockwise":
+        case "up":
+        case "down":
             emit("move", action);
-            break;
-        case "add":
-        case "undo":
-        case "reset":
-        case "resize":
-            emit(action);
             break;
         case undefined:
             /* Do nothing  */
             break;
         default:
-            throw {
-                name: "TypeError",
-                message: "Unknown action: " + action
-            };
+            emit(action);
+            break;
         }
     };
 
@@ -166,5 +155,8 @@ var Input = function (container) {
             }
             events[evt].push(callback);
         },
+        reset: function () {
+            events = {};
+        }
     };
 };

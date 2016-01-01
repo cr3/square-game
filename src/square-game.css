@@ -3,6 +3,7 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
+  font-family: Arial;
 }
 canvas {
   width: 100%;
@@ -20,6 +21,9 @@ canvas {
 #player {
   z-index: 1;
 }
+#message {
+  z-index: 2;
+}
 /* Sections */
 #wrapper {
   width: 320px;
@@ -36,6 +40,7 @@ section {
   position: relative;
 }
 header, nav {
+  display: flex;
   font-size: 12px;
   font-weight: bold;
   margin: 2px;
@@ -44,7 +49,6 @@ header {
   height: 46px;
 }
 nav {
-  display: flex;
   height: 26px;
 }
 footer {
@@ -77,6 +81,7 @@ input[type=button]:hover {
 header input[type=button] {
   border: 0;
   margin: 4px;
+  float: right;
 }
 nav input[type=button] {
   flex: 1 100%;
@@ -93,20 +98,22 @@ input[type=text] {
 .alternate {
   color: #bbada0;
 }
-.intro {
-  float: left;
-}
-.info {
-  float: right;
+.intro, .info {
+  flex: 1 100%;
 }
 .controls {
   background: #bbada0;
   border-radius: 3px;
   color: white;
+  height: 25px;
+}
+.counters {
+  height: 15px;
+  margin: 3px;
 }
 .counter {
-  margin: 3px 0 3px 0;
-}
-#counter {
   float: right;
+}
+.level {
+  float: left;
 }
