@@ -14,9 +14,8 @@ var Manager = function (container) {
             message.reset("Level complete");
 
             input.reset();
-            input.on("add", complete);
+            input.on("edit", complete);
             input.on("move", complete);
-            input.on("undo", complete);
             input.on("reset", complete);
             input.on("resize", resize);
         }
@@ -27,27 +26,20 @@ var Manager = function (container) {
         reset();
     };
 
-    var add = function () {
-        var action = Action("add", check);
+    var edit = function () {
+        var col = Math.floor((player.matrix.cols() - 1) / 2);
+        var row = Math.floor((player.matrix.rows() - 1) / 2);
+        var name = player.matrix.get(col, row) ? "remove" : "add";
 
-        player.animate(action);
+        player.edit(name, col, row, check);
         counter.increment();
     };
 
     var move = function (direction) {
-        var action = Action(direction, check);
-
-        player.animate(action);
         if (counter.count()) {
+            player.move(direction, check);
             counter.increment();
         }
-    };
-
-    var undo = function () {
-        var action = Action("undo");
-
-        player.animate(action);
-        counter.decrement();
     };
 
     var reset = function () {
@@ -57,9 +49,8 @@ var Manager = function (container) {
         message.reset();
 
         input.reset();
-        input.on("add", add);
+        input.on("edit", edit);
         input.on("move", move);
-        input.on("undo", undo);
         input.on("reset", reset);
         input.on("resize", resize);
     };

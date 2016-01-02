@@ -7,8 +7,8 @@ var Board = function (boardContainer, matrix) {
 
     /* Private variables.  */
     var context = boardContainer.getContext("2d");
-    if (typeof matrix === "undefined") {
-        matrix = Matrix(emptySquare);
+    if (!matrix) {
+        matrix = Matrix(null);
     }
 
     /* Private functions.  */
@@ -65,7 +65,11 @@ var Board = function (boardContainer, matrix) {
                 context.canvas.height);
 
             matrix.iterate(function (m, col, row) {
-                m.get(col, row).draw(context, col, row, squareSize);
+                var square = m.get(col, row);
+
+                if (square) {
+                    square.draw(context, col, row, squareSize);
+                }
             });
         },
         reset: function (cols, rows, count) {

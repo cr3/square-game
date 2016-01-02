@@ -8,7 +8,7 @@ var Message = function (messageContainer) {
         draw: function () {
             var size = Math.floor(context.canvas.width / 10);
 
-            if (typeof message !== "undefined") {
+            if (message) {
                 context.globalAlpha = 0.5;
                 context.fillStyle = "#bbada0";
                 context.fillRect(

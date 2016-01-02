@@ -1,4 +1,38 @@
 var Input = function (container) {
+    /* Private constants.  */
+    var canvasEvents = [
+        "mousedown",
+        "mousemove",
+        "mouseup",
+        "touchstart",
+        "touchmove",
+        "touchend"
+    ];
+    var windowEvents = [
+        "keydown",
+        "keyup",
+        "resize",
+        "orientationchange"
+    ];
+    var keyCodeAction = {
+        "8": "undo",    // backspace
+        "27": "undo",   // escape
+        "13": "edit",   // enter
+        "32": "edit",   // space
+        "37": "left",   // left arrow
+        "39": "right",  // right arrow
+        "38": "up",     // up arrow
+        "40": "down",   // down arrow
+        "72": "left",   // Vim left
+        "76": "right",  // Vim right
+        "75": "up",     // Vim up
+        "74": "down",   // Vim down
+        "65": "left",   // A
+        "68": "right",  // D
+        "87": "up",     // W
+        "83": "down"    // S
+    };
+
     /* Private variables.  */
     var events = {};
     var pointer = Pointer();
@@ -15,24 +49,11 @@ var Input = function (container) {
     };
 
     var listen = function () {
-        var index;
+        var canvas;
         var elements;
-        var canvasEvents = [
-            "mousedown",
-            "mousemove",
-            "mouseup",
-            "touchstart",
-            "touchmove",
-            "touchend"
-        ];
-        var windowEvents = [
-            "keydown",
-            "keyup",
-            "resize",
-            "orientationchange"
-        ];
+        var index;
 
-        /* Listen for click events on all buttons  */
+        /* Listen for click events on all buttons.  */
         elements = container.getElementsByTagName("input");
         for (index = 0; index < elements.length; ++index) {
             if (elements[index].type === "button") {
@@ -40,41 +61,26 @@ var Input = function (container) {
             }
         }
 
-        /* Listen for canvas events  */
+        /* Listen for canvas events.  */
         elements = container.getElementsByTagName("canvas");
-        for (index = 0; index < elements.length; ++index) {
-            canvasEvents.forEach(function (evt) {
-                elements[index].addEventListener(evt, handleEvent, false);
-            });
-        }
+        canvas = elements[elements.length - 1];
+        canvasEvents.forEach(function (evt) {
+            canvas.addEventListener(evt, handleEvent, false);
+        });
 
-        /* Listen for window events  */
+        /* Listen for window events.  */
         windowEvents.forEach(function (evt) {
             window.addEventListener(evt, handleEvent, false);
         });
     };
 
     var handleEvent = function (evt) {
-        var action;
         var element;
-        var keyCodeAction = {
-            "8": "undo",    // backspace
-            "27": "undo",   // escape
-            "13": "add",    // enter
-            "32": "add",    // space
-            "37": "left",   // left arrow
-            "39": "right",  // right arrow
-            "38": "up",     // up arrow
-            "40": "down",   // down arrow
-            "72": "left",   // Vim left
-            "76": "right",  // Vim right
-            "75": "up",     // Vim up
-            "74": "down",   // Vim down
-            "65": "left",   // A
-            "68": "right",  // D
-            "87": "up",     // W
-            "83": "down"    // S
-        };
+        var action = "noop";
+        var modifiers = evt.altKey ||
+            evt.ctrlKey ||
+            evt.metaKey ||
+            evt.shiftKey;
 
         evt = evt || window.event;
 
@@ -84,12 +90,14 @@ var Input = function (container) {
             action = "resize";
             break;
         case "keydown":
-            if (keyCodeAction[evt.keyCode]) {
+            if (!modifiers && keyCodeAction[evt.keyCode]) {
                 evt.preventDefault();
             }
             break;
         case "keyup":
-            action = keyCodeAction[evt.keyCode];
+            if (!modifiers) {
+                action = keyCodeAction[evt.keyCode];
+            }
             break;
         case "click":
             action = evt.target.id;
@@ -111,8 +119,8 @@ var Input = function (container) {
         case "touchend":
             element = evt.changedTouches ? evt.changedTouches[0] : evt;
             action = pointer.end(element.pageX, element.pageY);
-            if (typeof action === "undefined") {
-                action = "add";
+            if (action === "noop") {
+                action = "edit";
             }
             evt.preventDefault();
             break;
@@ -135,8 +143,8 @@ var Input = function (container) {
         case "down":
             emit("move", action);
             break;
-        case undefined:
-            /* Do nothing  */
+        case "noop":
+            /* No operation.  */
             break;
         default:
             emit(action);

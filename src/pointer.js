@@ -4,7 +4,7 @@ var Pointer = function (options) {
     var defaults = {
         allowedTime: 300,  // maximum time allowed to point
         restraint: 50,     // maximum perpendicular distance to travel
-        threshold: 75      // minimum distance to travel
+        threshold: 50      // minimum distance to travel
     };
     var startTime;
     var startX;
@@ -21,7 +21,7 @@ var Pointer = function (options) {
             startY = y;
         },
         end: function (x, y) {
-            var direction;
+            var direction = "noop";
             var distX = x - startX;
             var distY = y - startY;
             var elapsedTime = new Date().getTime() - startTime;

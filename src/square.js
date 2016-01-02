@@ -32,9 +32,3 @@ var Square = function (options) {
         }
     };
 };
-
-/* Empty square with an empty draw method.  */
-var emptySquare = {
-    draw: function () {
-    }
-};

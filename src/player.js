@@ -10,7 +10,7 @@ var Player = function (playerContainer, options) {
 
     /* Private variables.  */
     var context = playerContainer.getContext("2d");
-    var matrix = Matrix(emptySquare);
+    var matrix = Matrix(null);
     var player = Board(playerContainer, matrix);
     var queue = [];
     var stack = [];
@@ -34,9 +34,6 @@ var Player = function (playerContainer, options) {
         case "down":
             move(action);
             break;
-        case undefined:
-            /* Do nothing.  */
-            return;
         default:
             throw {
                 name: "TypeError",
@@ -47,11 +44,11 @@ var Player = function (playerContainer, options) {
         player.draw();
 
         if (step >= options.steps) {
-            if (!action.inversed) {
+            if (!action.options.inversed) {
                 stack.push(action);
             }
             queue.shift();
-            action.call();
+            action.options.callback();
             step = 0;
         }
 
@@ -69,19 +66,10 @@ var Player = function (playerContainer, options) {
     };
 
     var edit = function (action) {
-        var col = Math.floor(matrix.cols() / 2);
-        var row = Math.floor(matrix.rows() / 2);
+        var col = action.options.col;
+        var row = action.options.row;
         var oldElement = matrix.get(col, row);
-        var newElement;
-
-        switch (action.name) {
-        case "add":
-            newElement = square;
-            break;
-        case "remove":
-            newElement = emptySquare;
-            break;
-        }
+        var newElement = (action.name == "add") ? square : null;
 
         if (newElement !== oldElement) {
             matrix.set(col, row, newElement);
@@ -135,10 +123,14 @@ var Player = function (playerContainer, options) {
         var x = sign * width / options.steps;
         var y = 0;
         var row;
+        var square;
 
         context.clearRect(outerCol * width, 0, width, context.canvas.height);
         for (row = 0; row < matrix.rows(); ++row) {
-            matrix.get(innerCol, row).draw(context, outerCol, row, width);
+            square = matrix.get(innerCol, row);
+            if (square) {
+                square.draw(context, outerCol, row, width);
+            }
         }
 
         context.translate(x, y);
@@ -173,8 +165,24 @@ var Player = function (playerContainer, options) {
         player.draw();
     };
 
-    player.animate = function (action) {
-        queue.push(action);
+    player.edit = function (name, col, row, callback) {
+        queue.push(Action(name, {
+            callback: callback,
+            col: col,
+            row: row
+        }));
+        window.requestAnimationFrame(loop);
+    };
+
+    player.move = function (name, callback) {
+        queue.push(Action(name, {
+            callback: callback
+        }));
+        window.requestAnimationFrame(loop);
+    };
+
+    player.undo = function (name) {
+        queue.push(Action(name));
         window.requestAnimationFrame(loop);
     };
 

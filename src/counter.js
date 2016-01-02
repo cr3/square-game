@@ -21,8 +21,8 @@ var Counter = function (element) {
         draw: function () {
             element.innerHTML = count;
         },
-        reset: function (value) {
-            count = (typeof value === "undefined") ? initial : value;
+        reset: function () {
+            count = initial;
             this.draw();
         }
     };

@@ -2,6 +2,7 @@ module( "Counter", {
     setup: function() {
         var element = document.createElement("div");
 
+        element.innerHTML = "0";
         this.counter = Counter(element);
     }
 });
@@ -15,9 +16,11 @@ test("count", function () {
 });
 
 test("decrement", function () {
-    this.counter.reset(2);
-    this.counter.decrement();
+    this.counter.increment();
     equal(this.counter.count(), 1);
+
+    this.counter.decrement();
+    equal(this.counter.count(), 0);
 
     this.counter.decrement();
     equal(this.counter.count(), 0);
@@ -33,9 +36,10 @@ test("increment", function () {
 });
 
 test("reset", function () {
-    this.counter.reset(2);
-    equal(this.counter.count(), 2);
+    this.counter.reset();
+    equal(this.counter.count(), 0);
 
-    this.counter.reset(0);
+    this.counter.increment();
+    this.counter.reset();
     equal(this.counter.count(), 0);
 });

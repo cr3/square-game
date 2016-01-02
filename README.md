@@ -4,7 +4,7 @@ README
 The Square^2 game is about providing a limited set of commands to move
 squares in a matrix:
 
-    http://cr3.github.io/square-game/
+http://cr3.github.io/square-game/
 
 Getting started
 ---------------

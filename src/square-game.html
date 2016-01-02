@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="square-game.css" />
   </head>
   <body>
-    <div id="wrapper">
+    <div class="wrapper">
       <header>
         <div class="intro">
           <h1>Square<span class="alternate">&#178;</span></h1>
@@ -27,27 +27,26 @@
         </div>
       </header>
       <section>
-        <canvas id="board">
-          Your browser doesn't support HTML5 Canvas.
+        <canvas id="board" style="z-index: 0;">
+          <h2>Your browser doesn't support HTML5 Canvas.</h2>
         </canvas>
-        <canvas id="player">
+        <canvas id="player" style="z-index: 1;">
         </canvas>
-        <canvas id="message">
+        <canvas id="message" style="z-index: 2;">
         </canvas>
       </section>
       <nav>
-        <input type="button" id="add" value="+"
+        <input type="button" id="edit" value="+/-"
         /><input type="button" id="left" value="&#8592;"
         /><input type="button" id="right" value="&#8594;"
         /><input type="button" id="up" value="&#8630;"
-        /><input type="button" id="down" value="&#8631;"
-        /><input type="button" id="undo" value="&#8634;" />
+        /><input type="button" id="down" value="&#8631;" />
       </nav>
       <footer>
-        <h1>How to play</h1>
+        <h3>How to play</h3>
         <ol>
-          <li>Add a grey square with the <strong>+</strong> button or
-            <strong>Enter</strong> key.</li>
+          <li>Add or remove grey squares with the <strong>+/-</strong> button,
+            or the <strong>Enter</strong> key.</li>
           <li>Move all grey squares sideways with the
             <strong>&#8592;</strong> and <strong>&#8594;</strong> buttons,
             or the <strong>left</strong> and <strong>right</strong> arrow
