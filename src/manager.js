@@ -60,8 +60,14 @@ var Manager = function (container) {
             container.offsetWidth,
             container.offsetHeight
         ];
+        container.style.overflow = "scroll";
+        var scrollbar = [
+            content[0] - container.clientWidth,
+            content[1] - container.clientHeight
+        ];
+        container.style.overflow = null;
         var browser = [
-            window.innerWidth,
+            window.innerWidth - scrollbar[0],
             window.innerHeight
         ];
         var scale = Math.floor(Math.min(
